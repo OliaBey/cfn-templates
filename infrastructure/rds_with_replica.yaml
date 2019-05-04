@@ -1,0 +1,114 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Metadata:
+  License: Apache-2.0
+Description:  RDS_MySQL_With_Read_Replica
+
+Parameters:
+  DBName:
+    Default: MyDatabase
+    Description: The database name (only alphanumeric characters)
+    Type: String
+
+  DBUser:
+    NoEcho: 'true'
+    Description: The database admin account username (begin with a letter)
+    Type: String
+
+  DBPassword:
+    NoEcho: 'true'
+    Description: The database admin account password (only alphanumeric characters)
+    Type: String
+
+  DBAllocatedStorage:
+    Default: '5'
+    Description: The size of the database ( 5-1024 Gb)
+    Type: Number
+
+  DBInstanceClass:
+    Description: The database instance type
+    Type: String
+    Default: db.t2.micro
+    AllowedValues: [db.t1.micro, db.m1.small, db.t2.micro, db.t2.small]
+
+  ECSHostSecurityGroup:
+    Description: The EC2 security group with instances that need access to DB
+    Default: default
+    Type: String
+
+  VPC:
+    Description: VPC for ECS cluster
+    Type: AWS::EC2::VPC::Id
+
+  Subnets:
+    Description: Subnets for ECS cluster
+    Type: List<AWS::EC2::Subnet::Id>
+
+#  AccountId:
+#    Type: String
+
+#  MultiAZ:
+#    Description: Multi-AZ master database
+#    Type: String
+#    Default: 'false'
+#    AllowedValues: ['true', 'false']
+
+Resources:
+  RDSDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnets for RDS
+      SubnetIds: !Ref Subnets
+
+  DBEC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Open database for access
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '3306'
+        ToPort: '3306'
+        CidrIp: 0.0.0.0/0
+        #SourceSecurityGroupId: !Ref 'ECSHostSecurityGroup'
+        #EC2SecurityGroupOwnerId: !Ref 'AccountId'
+
+  MasterDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBName: !Ref 'DBName'
+      AllocatedStorage: !Ref 'DBAllocatedStorage'
+      DBInstanceClass: !Ref 'DBInstanceClass'
+      Engine: MySQL
+      MasterUsername: !Ref 'DBUser'
+      MasterUserPassword: !Ref 'DBPassword'
+      DBSubnetGroupName: !Ref RDSDBSubnetGroup
+      Tags:
+      - Key: Name
+        Value: Master Database
+      VPCSecurityGroups:
+        - Ref: 'DBEC2SecurityGroup'
+    DeletionPolicy: Delete
+
+Outputs:
+  MasterJDBCConnectionString:
+    Description: JDBC connection string for the master database
+    Value: !Join ['', ['jdbc:mysql://', !GetAtt [MasterDB, Endpoint.Address], ':',
+        !GetAtt [MasterDB, Endpoint.Port], /, !Ref 'DBName']]
+
+#  ReplicaJDBCConnectionString:
+#    Description: JDBC connection string for the replica database
+#    Value: !Join ['', ['jdbc:mysql://', !GetAtt [ReplicaDB, Endpoint.Address], ':',
+#        !GetAtt [ReplicaDB, Endpoint.Port], /, !Ref 'DBName']]
+
+#  DBSecurityGroup:
+#    Description: A reference to the security group for ECS hosts
+#    Value: !Ref DBSecurityGroup
+
+#  ReplicaDB:
+#    Type: AWS::RDS::DBInstance
+#    Properties:
+#      SourceDBInstanceIdentifier: !Ref 'MasterDB'
+#      DBInstanceClass: !Ref 'DBInstanceClass'
+#      Tags:
+#      - Key: Name
+#        Value: Read Replica Database
