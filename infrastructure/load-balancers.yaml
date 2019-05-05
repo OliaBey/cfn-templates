@@ -88,7 +88,7 @@ Resources:
         HttpCode: 200-299
       HealthCheckIntervalSeconds: 120
       HealthCheckPath: /
-      HealthCheckPort: 80
+      #HealthCheckPort: 80
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 60
       HealthyThresholdCount: 2
