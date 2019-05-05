@@ -84,8 +84,8 @@ Resources:
       VpcId: !Ref VPC
       Port: 80
       Protocol: HTTP
-      Matcher:
-        HttpCode: 200-299
+ #     Matcher:
+  #      HttpCode: 200-299
       HealthCheckIntervalSeconds: 60
       HealthCheckPath: /
       HealthCheckProtocol: HTTP
