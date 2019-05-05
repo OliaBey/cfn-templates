@@ -91,6 +91,7 @@ Resources:
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 30
       HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 2
 
 
 Outputs:
