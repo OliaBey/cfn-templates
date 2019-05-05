@@ -86,11 +86,10 @@ Resources:
       Protocol: HTTP
       Matcher:
         HttpCode: 200-299
-      HealthCheckIntervalSeconds: 120
+      HealthCheckIntervalSeconds: 60
       HealthCheckPath: /
-      #HealthCheckPort: 80
       HealthCheckProtocol: HTTP
-      HealthCheckTimeoutSeconds: 60
+      HealthCheckTimeoutSeconds: 30
       HealthyThresholdCount: 2
 
 
