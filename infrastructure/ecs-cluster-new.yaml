@@ -189,7 +189,7 @@ Resources:
       EvaluationPeriods: '1'
       Statistic: Maximum
       Threshold: '75'       #!Ref ClusterMaxMemoryReservationPercentage
-      AlarmDescription: Alarm if CPU too high
+      AlarmDescription: Alarm if Memory Reservation too high
       Period: '60'
       AlarmActions:
       - Ref: MemoryReservationScaleUpPolicy
@@ -214,8 +214,8 @@ Resources:
     Properties:
       EvaluationPeriods: '1'
       Statistic: Maximum
-      Threshold: '40'       #!Ref ClusterMaxMemoryReservationPercentage
-      AlarmDescription: Alarm if CPU too low
+      Threshold: '25'       #!Ref ClusterMaxMemoryReservationPercentage
+      AlarmDescription: Alarm if Memory Reservation too low
       Period: '60'
       AlarmActions:
       - Ref: MemoryReservationScaleDownPolicy
@@ -244,7 +244,7 @@ Resources:
             }]
         }
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+  #      - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
         - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
       Policies:
         - PolicyName: ecs-service
@@ -265,7 +265,6 @@ Resources:
                         "ecr:BatchGetImage",
                         "ecr:GetDownloadUrlForLayer",
                         "ecr:GetAuthorizationToken",
-                        "logs:CreateLogGroup",
                         "logs:CreateLogStream",
                         "logs:PutLogEvents",
                         "logs:DescribeLogStreams"
