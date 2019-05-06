@@ -43,7 +43,7 @@ Resources:
       Parameters:
         EnvironmentName: !Ref AWS::StackName
         InstanceType: t2.micro
-        ClusterSize: 1
+        ClusterSize: '1'
         VPC: !GetAtt VPC.Outputs.VPC
         Subnets: !GetAtt VPC.Outputs.PublicSubnets
         KeyName: OregonMy
