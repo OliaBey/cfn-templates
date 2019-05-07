@@ -2,7 +2,7 @@ Parameters:
   ExportStackName:
     Description: The name of the stack that exports the values
     Type: String
-    Default: TOR
+    Default: MASK
 
   DesiredCount:
     Description: How many instances of this task should we run across our cluster?
