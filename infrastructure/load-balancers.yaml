@@ -32,8 +32,8 @@ Resources:
       SecurityGroupIngress:
         - CidrIp: 0.0.0.0/0
           IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
+          FromPort: 443
+          ToPort: 443
       SecurityGroupEgress:
         - CidrIp: 0.0.0.0/0
           IpProtocol: tcp
@@ -57,10 +57,10 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       LoadBalancerArn: !Ref LoadBalancer
-      Port: '80'
-      Protocol: HTTP
-#      Certificates:
- #       - CertificateArn: !Ref ALBCertificateArn
+      Port: '443'
+      Protocol: HTTPS
+      Certificates:
+        - CertificateArn: !Ref ALBCertificateArn
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref DefaultTargetGroup
@@ -84,14 +84,14 @@ Resources:
       VpcId: !Ref VPC
       Port: 80
       Protocol: HTTP
- #     Matcher:
-  #      HttpCode: 200-299
+      Matcher:
+        HttpCode: 200-299
       HealthCheckIntervalSeconds: 60
       HealthCheckPath: /
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 30
-      HealthyThresholdCount: 2
-      UnhealthyThresholdCount: 2
+      HealthyThresholdCount: 5
+      UnhealthyThresholdCount: 5
 
 
 Outputs:
