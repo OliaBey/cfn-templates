@@ -56,7 +56,7 @@ Resources:
         - Name: petclinic
           Essential: true
           Image: !Ref PetServiceImage
-          Memory: 325
+          Memory: 450
           Environment:
             - Name: PRODUCT_SERVICE_URL
               Value:
